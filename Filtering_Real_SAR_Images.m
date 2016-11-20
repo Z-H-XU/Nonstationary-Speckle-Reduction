@@ -32,8 +32,8 @@ addpath([basepath, '/minFunc']);
 addpath([basepath, '/minFunc/compiled']);
 
 
-looks=[1,8];
-Slooks={'1','8'};
+looks=[8,1];
+Slooks={'8','1'};
 for looklp=1:2
     
     L=looks(looklp);
@@ -180,6 +180,8 @@ for looklp=1:2
     subplot(2,4,6);imshow(Ratio_FANS_filtered, [0  5]);title('Ratio of FANS');
     subplot(2,4,7);imshow(Ratio_FoE_Nakafiltered,[0 5]);title('Ratio FoE-Naka');
     subplot(2,4,8);imshow(Ratio_proposed, [0 5]);title('Ratio of Proposed');
+    
+    pause;
     
 end
 
