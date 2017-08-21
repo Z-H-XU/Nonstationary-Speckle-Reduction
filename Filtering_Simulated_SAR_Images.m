@@ -34,17 +34,16 @@ addpath([basepath, '/minFunc/compiled']);
 
 
 img = double(imread('Dataset\barbara.tif'));
-img=img(:,:,1);
-looks=[1,2,8];
-
+img_o=img(:,:,1);
+looks=[1,2,8];RoI;
 
 % select the number of multi-looks
 for lk=1:3
     
-    L=looks(lk); 
+    Look=looks(lk); 
 
 
-    [img,simu_ima]=LogNorGen_MultiLookingProc(img,L);
+    [img,simu_ima]=LogNorGen_MultiLookingProc(img_o,Look);
 
 
     r_0=simu_ima./(img+eps);
@@ -92,7 +91,7 @@ for lk=1:3
     [r,c] = size(simu_ima);
     K{filter_num + 1} = size(simu_ima);
     f_noise = (im1(:));
-    [lambda,options] = SimulatedSAR_OptsSetting(L,exp(sigma2)); 
+    [lambda,options] = SimulatedSAR_OptsSetting(Look,exp(sigma2)); 
     disp('Step 2:  L-BFGS')
     tic;
     x0=f_noise;
@@ -111,7 +110,7 @@ for lk=1:3
     %----------------------------------------------------------------------------
     disp('FANS')
     tic
-    FANS_filtered = FANS(simu_ima, L);
+    FANS_filtered = FANS(simu_ima, Look);
     toc
     disp('----------------------------------')
 
@@ -123,7 +122,7 @@ for lk=1:3
     %-----------------------------------------------------------------------------------
     disp('Naka-FoE')
     tic
-    FoE_Nakafiltered=FoE_Naka(simu_ima,L);
+    FoE_Nakafiltered=FoE_Naka(simu_ima,Look);
     FoE_Nakafiltered=reshape(FoE_Nakafiltered,r,c);
     toc
     disp('----------------------------------')
@@ -140,10 +139,15 @@ for lk=1:3
     ssim_proposed     =  cal_ssim(img, proposed, 0, 0 )
 
 
-    edp_noisy =  cal_beta(img,simu_ima)
-    edp_fans  =  cal_beta(img,FANS_filtered)
-    edp_foenaka    =  cal_beta(img,FoE_Nakafiltered)
-    edp_proposed = cal_beta(img,proposed)
+    edge_noisy =  cal_beta(img,simu_ima)
+    edge_fans  =  cal_beta(img,FANS_filtered)
+    edge_foenaka    =  cal_beta(img,FoE_Nakafiltered)
+    edge_proposed = cal_beta(img,proposed)
+    
+    cnr_noisy =  cal_cnr(img,simu_ima,Look)
+    cnr_fans  =  cal_cnr(img,FANS_filtered,Look)
+    cnr_foenaka    =  cal_cnr(img,FoE_Nakafiltered,Look)
+    cnr_proposed = cal_cnr(img,proposed,Look)
 
     figure
     subplot(2,4,1);imshow(simu_ima,[]);title(['Noisy,PSNR:',num2str(psnr_noisy),',SSIM:',num2str(ssim_noisy)]);
